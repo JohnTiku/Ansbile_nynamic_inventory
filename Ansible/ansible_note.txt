@@ -129,8 +129,8 @@ vi with your keyname and go n copy and past your ky from your labtop download an
 change th permission to chmod 400 e.g chmod 400 "the file you create with your key"
 Generate access key and secret access key
 and and put it and  run this command:
-export AWS_ACCESS_KEY_ID='AKIAVE3D5I3T73RYPUWB'
-export AWS_SECRET_ACCESS_KEY='fRYhfI7Ugg7fsLiUrNJO52gglG7/PcwD7K6j6Dc5' "
+export AWS_ACCESS_KEY_ID='AccessKey'
+export AWS_SECRET_ACCESS_KEY='SecreAccesskey' "
 
 download the package needed "aws s3 cp s3://code-sharing-bucket/jespo/ansible/ec2.py .
 aws s3 cp s3://code-sharing-bucket/jespo/ansible/ec2.ini .
