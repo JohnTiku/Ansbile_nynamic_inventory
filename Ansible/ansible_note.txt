@@ -1,0 +1,190 @@
+meaning of ansible is an open souce it configuration management deployment and orchestration tool.
+master node to client note (appserver and webserver)
+use ansible to configure client server.
+use for deployment into difrrent infrastruture
+use for orchestration 
+use for automation complex multi-tier
+
+PLAYBOOK.
+this is an instruction file that you want ansible to carryout and is written in YAML. like task to install httpd
+is better to seperate your playbook. like palybook for webserver, appserver
+in written playbook is must start with ---
+in specifying task like yum install appache. you need to state how it will start the server and also enable it
+
+ANSIBLE MASTER AND CLIENT ARTCHTECTURE
+ansible is base on master and client archtechture using ssh not agent. is agentless.
+the port is using is port 22
+client node liseten from port 22 from the master.
+ansible is only install in the masternode not like chief and puppet that is agent base.
+
+when you install ansible in the master it comes with a module and you can create your own module using python
+MODULE
+this is a wrap task like carry out multiple task at once.
+
+Host inventory
+this carry the endpoint or ip of client server and you specify them in a group like websever group.
+
+PLUGIN
+this is an advance part of module like a roll back to old version
+CONNECTION PLUGIN
+this deals with carrying connection to docker containers
+
+ANSIBLE ROLE
+role in ansible are for resuable with ansible galaxy
+
+
+ ANSIBLE COMMAND
+ ansible -m command -a "uptime" dev
+ansible = key word
+-m = module
+command -s = module name
+uptime= os command 
+dev= target server group
+
+
+ILLUSTRATION
+1, create 3 instance and ssh into them
+2 install ansible on the master
+3,install all the necessary packages on the master with this "yum install epel-release -y"
+4, install ansible with this command on master "yum install ansible –y"
+5, check all the necessary file like /etc/ansble and do ll to see all the file
+6, cat host file "cat host"
+7 create user ansible and passwd ansible on all the server[master and client] "useradd ansible"
+8, edit sshd_config on all the server to ecallate but need to back it up first. 
+9, vi /etc/ssh/sshd_config
+10, look for this file "" by "/PasswordAuthentication no" and change yes it e.g PasswordAuthentication yes
+12 look for PermitRootLogin and uncomment it e.g "PermitRootLogin" and save it on all the server
+13, Restart the sshd by "systemctl restart sshd"
+14, loging with the ansible user e.g ssh ansible@ip in all the server on all the server
+15, Do sudo priviledge on all the server e.g visudo or this "usermod -aG wheel ansible" to add the user to wheel group
+16, Generate the public key with this command "ssh-keygen -t rsa" in the master and do ll
+17, cd .ssh and do ll and you will see two and cd back
+18, sudo vi /etc/ansible/hosts
+19, uncomment  [webservers] and put all the client server ip in the host file with the user name you create "<your_server_ip> ansible_user=ansible"
+18, Generate ssh form master with this command "ssh-copy-id ansible@PublicIP"
+19, copy on the client server with this command  ssh-copy-id ansible@publicip run this on the master
+20, ping the server with this command "ansible -m ping webservers"
+21, run this command for test ansible webservers -b -m yum -a "name=ntp state=latest"
+22, ansible webservers -b -m service -a "name=httpd state=started" to start this service
+
+
+ANSIBLE CONTINUATION
+Ansible is agentless like other conguration tool e.g chef
+ansible dont not consume cpu in the client not like other tool which use agent and also consume cpu space
+ansible is passwordless authectetication
+to set passwordless authetication
+coomand to generate keypair ssh key-gen
+ansible comes with configuration files 
+a, hosts file is for inventory or group server
+you can have different playbook for different group server
+
+Making your environment dynamic with ansible
+1, Dynamic inventory this is when autoscaling scale new instance and still want ansible to manage it inventory file by configuring what you want to install
+a, Instance in the inventory
+b, send the pairkey generated to client server that stood up
+
+
+ILLUSTRATION
+Create Ansible user and password and login on both server
+solution
+useradd ansible
+passwd ansible
+vi /etc/ssh/sshd_config
+edit /etc/sudoers
+login to test it by log into the server with the user created "ansible"
+Generate the pairkey with this "ssh key-gen"
+and copy it to client server.
+
+
+
+
+
+
+
+
+
+
+DYNAMIC ANSIBLE NAD DYNAMIC INVENTORY
+1,sudo apt update -y
+sudo apt install -y ansible
+sudo apt install python-is-python3
+sudo apt-get install python3-pip -y
+pip3 install boto
+
+pip3 install boto3
+
+pip3 install awscli
+
+
+pip3 install boto3
+
+pip3 install awscli
+
+edit ansible.cfg the file is in /etc/ansible/ansible.cfg
+uncomment "sudo_user   = root"
+uncomment "host_key_checking = False" and save it
+
+copy your keypair with the name you are using e.g
+vi with your keyname and go n copy and past your ky from your labtop download and paste it in the vi open and save it.
+change th permission to chmod 400 e.g chmod 400 "the file you create with your key"
+Generate access key and secret access key
+and and put it and  run this command:
+export AWS_ACCESS_KEY_ID='AKIAVE3D5I3T73RYPUWB'
+export AWS_SECRET_ACCESS_KEY='fRYhfI7Ugg7fsLiUrNJO52gglG7/PcwD7K6j6Dc5' "
+
+download the package needed "aws s3 cp s3://code-sharing-bucket/jespo/ansible/ec2.py .
+aws s3 cp s3://code-sharing-bucket/jespo/ansible/ec2.ini .
+change the permission on the two file you downloaded from jespo s3 bucket
+e.g  chmod +x ec2.py and chmod +x ec2.ini
+and run this command to authenticate to end user e.g ssh-agent bash
+run this command to add the keypair name e.g
+ssh-add /home/ubuntu/oregion-key.pem
+
+export the key with this command 
+{chown ubuntu:ubuntu your key}
+export EC2_INI_PATH=/home/ubuntu/ec2.ini
+
+export ANSIBLE_HOSTS=/home/ubuntu/ec2.py
+
+export EC2_INSTANCE_FILTERS='tag:Name=Client*'
+
+EDIT the security group of master to all your client ip address, also master ip and my ip
+
+run this command
+./ec2.py
+
+
+test this hard code command 
+ansible -m file -b -a "path=/home/ubuntu/demo2.txt state=touch" -i ec2.py ec2 (this is the command that will replicate the addition of hosts to inventory dynamically)
+
+ansible -m user -b -a "name=user1 state=present" -i ec2.py ec2
+
+ansible -m apt -b -a "name=* state=latest" -i ec2.py ec2
+
+ansible -m file -b -a "path=/home/ubuntu/demo2.txt state=touch" -i ec2.py ec2
+
+ansible -m copy -b -a "src=/home/ubuntu/test1 dest=/home/ubuntu" -i ec2.py ec2
+
+ansible -m user -b -a "name=user1 state=present" -i ec2.py ec2
+
+ansible -m user -b -a "name=group1" -i ec2.py ec2
+
+ansible -m user -b -a "name=user1 group=group1" -i ec2.py ec2
+
+ansible -m user -b -a "name=ntp state=absent" -i ec2.py ec2
+
+ansible -m user -b -a "name=httpd state=absent" -i ec2.py ec2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
